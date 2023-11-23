@@ -32,7 +32,7 @@ Tech Stack: React.js, Material UI
 
 
 ### Backend API Repository
-Find the backend API code in my [Backend Repository](git@github.com:imSmaity/PestoTodoBackend).
+Find the backend API code in my [Backend Repository](https://github.com/imSmaity/PestoTodoBackend).
 
 
 
