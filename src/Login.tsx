@@ -1,11 +1,24 @@
 import { Box, Button, Modal, SxProps, TextField, Theme } from '@mui/material'
+import { ChangeEvent, useState } from 'react'
+import { ILogin } from './types'
 // 0696FF
 interface ILoginProps {
   open: boolean
   handleClose: () => void
-  handleLogin: () => void
+  handleLogin: (data: ILogin) => void
 }
 const Login = ({ open, handleClose, handleLogin }: ILoginProps) => {
+  const [loginData, setLoginData] = useState<ILogin>({
+    email: '',
+    password: '',
+  })
+
+  const handleInput = (
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    setLoginData({ ...loginData, [e.target.name]: e.target.value })
+  }
+
   return (
     <Modal
       open={open}
@@ -14,15 +27,48 @@ const Login = ({ open, handleClose, handleLogin }: ILoginProps) => {
       aria-describedby="modal-modal-description"
     >
       <Box sx={style}>
-        <TextField id="filled-basic" label="Email" variant="filled" />
-        <TextField id="filled-basic" label="Password" variant="filled" />
-        <Box sx={{ display: 'flex', justifyContent: 'center', pt: 2 }}>
+        <TextField
+          id="filled-basic"
+          label="Email"
+          name="email"
+          variant="filled"
+          onChange={handleInput}
+        />
+        <TextField
+          id="filled-basic"
+          label="Password"
+          name="password"
+          variant="filled"
+          onChange={handleInput}
+        />
+        <Box sx={{ display: 'flex', gap: 2, justifyContent: 'center', pt: 2 }}>
           <Button
             variant="contained"
-            sx={{ p: 1, width: 100 }}
-            onClick={handleLogin}
+            disableElevation
+            sx={{
+              p: 1,
+              width: 100,
+              backgroundColor: '#0696FF',
+              textTransform: 'none',
+            }}
+            onClick={() => handleLogin(loginData)}
           >
             Login
+          </Button>
+          <Button
+            variant="contained"
+            disableElevation
+            sx={{
+              p: 1,
+              width: 150,
+              backgroundColor: '#0696FF',
+              textTransform: 'none',
+            }}
+            onClick={() =>
+              handleLogin({ email: 'guest@gmail.com', password: 'guest' })
+            }
+          >
+            Guest Login
           </Button>
         </Box>
       </Box>

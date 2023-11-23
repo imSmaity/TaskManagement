@@ -4,7 +4,7 @@ import { Button, SxProps } from '@mui/material'
 interface IStatusButtonProps {
   isActive: boolean
   label: string
-  onPress: () => void
+  onPress: (e: any) => void
   style?: SxProps<Theme>
 }
 
@@ -20,7 +20,13 @@ const StatusButton = ({
         <Button
           variant="contained"
           onClick={onPress}
-          sx={{ borderRadius: 5, ...style }}
+          disableElevation={true}
+          sx={{
+            borderRadius: 5,
+            textTransform: 'none',
+            backgroundColor: '#0696FF',
+            ...style,
+          }}
         >
           {label}
         </Button>
@@ -28,7 +34,14 @@ const StatusButton = ({
         <Button
           variant="outlined"
           onClick={onPress}
-          sx={{ borderRadius: 5, ...style }}
+          disableElevation={true}
+          sx={{
+            borderRadius: 5,
+            textTransform: 'none',
+            borderColor: '#0696FF',
+            color: '#0696FF',
+            ...style,
+          }}
         >
           {label}
         </Button>

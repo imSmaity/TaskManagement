@@ -1,42 +1,106 @@
 import {
-  Card,
   Button,
+  Card,
+  CardActions,
+  CardContent,
   SxProps,
   Theme,
   Typography,
-  CardContent,
-  CardActions,
 } from '@mui/material'
-import React from 'react'
+import { useState } from 'react'
+import StatusButton from './StatusButton'
+import TaskEdit from './TaskEdit'
+import { ITask } from '../types'
+import Api from '../Api'
 
-const TaskCard = () => {
+interface ITaskCardProps extends ITask {
+  tasks: ITask[]
+  setTasks: Function
+  token: string
+  mts?: string
+}
+const TaskCard = ({
+  _id,
+  title,
+  description,
+  status,
+  setTasks,
+  token,
+  mts,
+}: ITaskCardProps) => {
+  const [openEdit, setOpenEdit] = useState<boolean>(false)
+
+  const updateTask = (data: ITask) => {
+    Api.updateTask(token, { ...data, task_id: data._id })
+      .then((data: any) => {
+        setTasks(data.tasks)
+        setOpenEdit(false)
+      })
+      .catch((error) => {
+        console.log(error)
+      })
+  }
+
+  const deleteTask = (_id: string) => {
+    Api.deleteTask(token, _id)
+      .then((data: any) => {
+        setTasks(data.tasks)
+      })
+      .catch((error) => {
+        console.log(error)
+      })
+  }
+
   return (
-    <Card variant="outlined" sx={cardStyle}>
-      <CardContent>
-        <Typography sx={{ color: 'green' }}>{'Done'.toUpperCase()}</Typography>
-        <Typography>
-          {
-            'Red design with blue mixed deep color new Button, Create, Update functionality'
-          }
-        </Typography>
-        <Typography sx={{ fontSize: 12, color: 'gray' }}>
-          {new Date().toLocaleString()}
-        </Typography>
-      </CardContent>
-      <CardActions>
-        <Button
-          variant="outlined"
-          sx={{ borderRadius: 5, textTransform: 'none' }}
-        >
-          Mark as done
-        </Button>
-      </CardActions>
-    </Card>
+    <>
+      <Card variant="outlined" sx={cardStyle} onClick={() => setOpenEdit(true)}>
+        <CardContent>
+          <Typography sx={{ color: 'green' }}>
+            {status === 1 ? 'TODO' : status === 2 ? 'IN PROGRESS' : 'DONE'}
+          </Typography>
+          <Typography>{title}</Typography>
+          <Typography>{description}</Typography>
+          <Typography sx={{ fontSize: 12, color: 'gray' }}>
+            {new Date(String(mts)).toDateString()}
+          </Typography>
+        </CardContent>
+        <CardActions>
+          <StatusButton
+            label={status === 3 ? 'Done' : 'Mark as done'}
+            isActive={status === 3}
+            onPress={(e: any) => {
+              e.stopPropagation()
+              if (status === 3) {
+                updateTask({ _id, description, title, status: 1 })
+              } else {
+                updateTask({ _id, description, title, status: 3 })
+              }
+            }}
+            style={{ textTransform: 'none' }}
+          />
+          <Button
+            sx={{ textTransform: 'none', color: '#bbbbbb' }}
+            onClick={(e: any) => {
+              e.stopPropagation()
+              deleteTask(String(_id))
+            }}
+          >
+            Delete
+          </Button>
+        </CardActions>
+      </Card>
+      <TaskEdit
+        taskOldData={{ _id, title, description, status }}
+        openEdit={openEdit}
+        setOpenEdit={setOpenEdit}
+        btn2Label={'Update'}
+        handleTask={updateTask}
+      />
+    </>
   )
 }
 
 const cardStyle: SxProps<Theme> = {
-  width: '20%',
   padding: 1,
 }
 
